@@ -1,0 +1,10 @@
+# Cross-Channel Marketing Performance Dashboard — Python dependencies
+flask>=3.0.0
+pandas>=2.2.0
+openpyxl>=3.1.0
+plotly>=5.9.0
+anthropic>=0.40.0
+pinecone>=5.0.0
+fastembed>=0.4.0
+python-dotenv>=1.0.0
+gunicorn>=23.0.0
