@@ -33,6 +33,19 @@ N_WEEKS = 8
 START = datetime.date(2026, 5, 4)  # 8 Mondays leading up to today (2026-07-01)
 WEEK_STARTS = [START + datetime.timedelta(weeks=i) for i in range(N_WEEKS)]
 
+# Portfolio-wide paid social spend spike (week index 4, 2026-06-01), applied across
+# every social platform so the aggregate crosses the 15% WoW threshold. Feeds the
+# acquisition-to-activation-gap story: this spike precedes the email dilution/open-rate
+# decline that starts at week index 5.
+SOCIAL_SPEND_SPIKE_WEEK = 4
+SOCIAL_SPEND_SPIKE_MULTIPLIER = 1.35
+
+
+def apply_spend_spike(spend, week_index):
+    if week_index == SOCIAL_SPEND_SPIKE_WEEK:
+        return spend * SOCIAL_SPEND_SPIKE_MULTIPLIER
+    return spend
+
 
 def week_range(i):
     start = WEEK_STARTS[i]
@@ -54,7 +67,7 @@ def gen_meta():
         base_spend = {"Prospecting - Broad": 3200, "Retargeting - Core Audience": 1800, "UGC - Video Creative": 2400}[camp]
         for i in range(N_WEEKS):
             start, end = week_range(i)
-            spend = jitter(base_spend)
+            spend = apply_spend_spike(jitter(base_spend), i)
             impressions = int(spend / 0.012)
             frequency = round(jitter(2.1, 0.1), 2)
             ctr = round(jitter(1.4, 0.1), 2)
@@ -101,6 +114,13 @@ def gen_google_search():
             clicks = int(spend / jitter(2.10))
             impressions = int(clicks / jitter(0.055))
             ctr = round(clicks / impressions * 100, 2)
+
+            # Inject: search CTR underperformance < 3%, Competitor Conquesting, weeks 6-8 (index 5-7)
+            # — conquesting terms/copy resonate less than owned brand/category terms.
+            if camp == "Competitor Conquesting" and i >= 5:
+                ctr = round(random.uniform(1.8, 2.6), 2)
+                clicks = int(impressions * ctr / 100)
+
             conversions = int(clicks * random.uniform(0.06, 0.1))
             cost_per_conv = round(spend / max(conversions, 1), 2)
             conv_rate = round(conversions / clicks * 100, 2)
@@ -141,7 +161,7 @@ def gen_tiktok():
         prev_cpa = None
         for i in range(N_WEEKS):
             start, end = week_range(i)
-            spend = jitter(base_spend, 0.06)
+            spend = apply_spend_spike(jitter(base_spend, 0.06), i)
             frequency = round(jitter(2.3, 0.1), 2)
             ctr = round(jitter(1.1, 0.1), 2)
             impressions = int(spend / 0.009)
@@ -180,7 +200,7 @@ def gen_pinterest():
         base_spend = {"Idea Pins - Awareness": 1400, "Shopping Ads - Catalog Sales": 2100}[camp]
         for i in range(N_WEEKS):
             start, _ = week_range(i)
-            spend = jitter(base_spend, 0.07)
+            spend = apply_spend_spike(jitter(base_spend, 0.07), i)
             frequency = round(jitter(2.0, 0.1), 2)
             impressions = int(spend / 0.007)
 
@@ -218,7 +238,7 @@ def gen_snapchat():
         base_spend = {"Snap Ads - Prospecting": 1100, "Story Ads - Retargeting": 800}[camp]
         for i in range(N_WEEKS):
             start, _ = week_range(i)
-            spend = jitter(base_spend, 0.08)
+            spend = apply_spend_spike(jitter(base_spend, 0.08), i)
             frequency = round(jitter(2.4, 0.1), 2)
             impressions = int(spend / 0.01)
             swipe_rate = round(jitter(1.0, 0.12), 2)
@@ -314,7 +334,7 @@ def gen_email():
         unsubscribes = int(sends * unsub_rate / 100)
 
         rows.append({
-            "Campaign Title": f"Weekly Newsletter — Week of {start.isoformat()}",
+            "Campaign Title": "Weekly Newsletter",
             "Send Time": start.isoformat(),
             "Emails Sent": sends,
             "Opens": opens,
