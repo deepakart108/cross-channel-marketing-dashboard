@@ -1,21 +1,21 @@
 """RAG layer: ground rule-engine flags in official platform documentation.
 
-Pipeline: chunk platform docs -> embed (fastembed) -> store in Pinecone ->
-at insight-generation time, retrieve chunks relevant to a Flag -> Claude
-synthesizes the flag + retrieved doc context into a narrative insight card.
+Pipeline: chunk platform docs -> Pinecone embeds + stores them (integrated
+inference — no local embedding model) -> at insight-generation time, retrieve
+chunks relevant to a Flag -> Claude synthesizes the flag + retrieved doc
+context into a narrative insight card.
 """
 
 import os
 
 from anthropic import Anthropic
 from dotenv import load_dotenv
-from fastembed import TextEmbedding
 from pinecone import Pinecone
 
 load_dotenv()
 
 PINECONE_INDEX_NAME = "marketing-dashboard-docs"
-EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+PINECONE_NAMESPACE = "platform-guidance"
 CLAUDE_MODEL = "claude-sonnet-5"
 
 # Flags whose channel is "programmatic" carry the DSP name (e.g. "Generic DSP") as
@@ -23,18 +23,17 @@ CLAUDE_MODEL = "claude-sonnet-5"
 # by channel instead of by platform string.
 CHANNEL_TO_DOC_PLATFORM = {"programmatic": "programmatic"}
 
-# Explicit timeouts on both clients: a hang here would otherwise block
+# Explicit timeout on the Anthropic client: a hang here would otherwise block
 # app.py's background build thread indefinitely — each flag's work is
 # wrapped in a try/except there, but only a raised error (not an unbounded
 # wait) gets caught and turned into a fallback insight card.
 anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"), timeout=30.0)
 pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-# Built eagerly at import time (main thread) rather than lazily on first call.
-# ONNX Runtime's session init is unreliable when it first happens on a
-# background thread (app.py builds the dashboard off-thread to avoid
-# blocking gunicorn workers) — constructing it here guarantees that happens
-# on the main thread before any background work starts.
-_embedder = TextEmbedding(EMBEDDING_MODEL)
+# Pinecone's integrated embedding (index created via create_index_for_model in
+# ingest_docs.py) means Pinecone embeds both the stored chunks and this query
+# server-side — no local embedding model (fastembed/onnxruntime) runs in this
+# process. That dependency alone was pushing the deployed app's memory right
+# up against Render's free-tier 512MB cap and causing repeated OOM restarts.
 _index = pinecone_client.Index(PINECONE_INDEX_NAME)
 
 
@@ -42,16 +41,19 @@ def retrieve_context(flag, top_k: int = 5):
     """Query Pinecone for doc chunks relevant to a rules.Flag's platform."""
     doc_platform = CHANNEL_TO_DOC_PLATFORM.get(flag.channel, flag.platform)
     query = f"{flag.rule_id} {flag.what_happened}"
-    vector = next(_embedder.embed([query])).tolist()
 
-    results = _index.query(
-        vector=vector,
+    results = _index.search(
+        namespace=PINECONE_NAMESPACE,
+        inputs={"text": query},
         top_k=top_k,
-        include_metadata=True,
         filter={"platform": {"$eq": doc_platform}},
+        fields=["chunk_text", "source_file", "section"],
         timeout=30.0,
     )
-    return [match.metadata for match in results.matches]
+    return [
+        {"text": hit.fields.get("chunk_text"), "source_file": hit.fields.get("source_file"), "section": hit.fields.get("section")}
+        for hit in results.result.hits
+    ]
 
 
 def generate_insight(flag, context_chunks):

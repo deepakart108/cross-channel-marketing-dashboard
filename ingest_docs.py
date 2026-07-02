@@ -1,5 +1,11 @@
 """
-ingest_docs.py — Chunk platform guidance markdown files and upload embeddings to Pinecone.
+ingest_docs.py — Chunk platform guidance markdown files and upload to Pinecone.
+
+Uses Pinecone's integrated (server-side) embedding rather than a local model —
+running fastembed/onnxruntime in-process pushed the deployed app's memory
+right up against Render's free-tier 512MB cap. Pinecone embeds both the
+upserted records and the query text itself; the app never loads an embedding
+model at all.
 
 Usage:
     1. Put platform guidance .md files in ./docs/platform_guidance/.
@@ -13,18 +19,17 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from pinecone import Pinecone, ServerlessSpec
-from fastembed import TextEmbedding
+from pinecone import Pinecone
 
 load_dotenv()
 
 # ── Config ────────────────────────────────────────────────────────────────────
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 INDEX_NAME       = "marketing-dashboard-docs"
+NAMESPACE        = "platform-guidance"
 DOCS_DIR         = "./docs/platform_guidance"
-EMBEDDING_MODEL  = "BAAI/bge-small-en-v1.5"  # 384-dim, ONNX-based (no PyTorch needed)
-EMBEDDING_DIM    = 384
-BATCH_SIZE       = 100
+EMBEDDING_MODEL  = "multilingual-e5-large"  # Pinecone-hosted — no local inference
+BATCH_SIZE       = 90     # upsert_records caps at ~96 records / 2MB per call
 MAX_CHUNK_CHARS  = 1200   # approx 250 tokens — safe for Pinecone metadata
 OVERLAP_WORDS    = 15     # words carried over between split sub-chunks
 
@@ -110,25 +115,24 @@ def main():
     pc = Pinecone(api_key=PINECONE_API_KEY)
 
     existing = [idx.name for idx in pc.list_indexes()]
-    if INDEX_NAME not in existing:
-        print(f"Creating index '{INDEX_NAME}' (this takes ~30 s)…")
-        pc.create_index(
-            name=INDEX_NAME,
-            dimension=EMBEDDING_DIM,
-            metric="cosine",
-            spec=ServerlessSpec(cloud="aws", region="us-east-1"),
-        )
-        while not pc.describe_index(INDEX_NAME).status["ready"]:
-            print("  Waiting for index to be ready…")
-            time.sleep(5)
-        print("Index ready.")
-    else:
-        print(f"Index '{INDEX_NAME}' already exists — upserting into it.")
+    if INDEX_NAME in existing:
+        print(f"Deleting existing index '{INDEX_NAME}' to recreate with integrated embedding…")
+        pc.delete_index(INDEX_NAME)
+        time.sleep(5)
+
+    print(f"Creating index '{INDEX_NAME}' with integrated embedding ({EMBEDDING_MODEL})…")
+    pc.create_index_for_model(
+        name=INDEX_NAME,
+        cloud="aws",
+        region="us-east-1",
+        embed={"model": EMBEDDING_MODEL, "field_map": {"text": "chunk_text"}},
+    )
+    while not pc.describe_index(INDEX_NAME).status["ready"]:
+        print("  Waiting for index to be ready…")
+        time.sleep(5)
+    print("Index ready.")
 
     index = pc.Index(INDEX_NAME)
-
-    print(f"\nLoading embedding model '{EMBEDDING_MODEL}'…")
-    model = TextEmbedding(EMBEDDING_MODEL)
 
     docs_path = Path(DOCS_DIR)
     md_files = sorted(docs_path.glob("*.md"))
@@ -148,30 +152,24 @@ def main():
 
     print(f"\nTotal chunks to upload: {len(all_chunks)}")
 
-    print("\nGenerating embeddings and uploading to Pinecone…")
+    print("\nUploading records (Pinecone embeds server-side)…")
     total_batches = (len(all_chunks) + BATCH_SIZE - 1) // BATCH_SIZE
 
     for batch_num, start in enumerate(range(0, len(all_chunks), BATCH_SIZE), 1):
         batch = all_chunks[start : start + BATCH_SIZE]
-        texts = [c["text"] for c in batch]
-        embeds = [e.tolist() for e in model.embed(texts)]
-
-        vectors = [
+        records = [
             {
-                "id": f"chunk_{start + i}",
-                "values": embedding,
-                "metadata": {
-                    "text": chunk["text"],
-                    "source_file": chunk["source_file"],
-                    "section": chunk["section"],
-                    "platform": chunk["platform"],
-                },
+                "_id": f"chunk_{start + i}",
+                "chunk_text": chunk["text"],
+                "source_file": chunk["source_file"],
+                "section": chunk["section"],
+                "platform": chunk["platform"],
             }
-            for i, (chunk, embedding) in enumerate(zip(batch, embeds))
+            for i, chunk in enumerate(batch)
         ]
 
-        index.upsert(vectors=vectors)
-        print(f"  Batch {batch_num}/{total_batches} uploaded ({len(vectors)} vectors)")
+        index.upsert_records(namespace=NAMESPACE, records=records)
+        print(f"  Batch {batch_num}/{total_batches} uploaded ({len(records)} records)")
 
     print(f"\nDone! {len(all_chunks)} chunks are live in Pinecone index '{INDEX_NAME}'.")
 

@@ -294,46 +294,6 @@ def health():
     return jsonify({"status": "ok"})
 
 
-@app.route("/api/debug/network")
-def debug_network():
-    """Temporary: check outbound connectivity + a real API round-trip from
-    Render's network, to isolate whether the stuck background build is a
-    network reachability issue or something else."""
-    import time
-    import httpx
-    from rag import anthropic_client, _index, _embedder
-
-    out = {}
-    for name, url in [("anthropic_dns", "https://api.anthropic.com"), ("pinecone_dns", "https://api.pinecone.io")]:
-        t0 = time.time()
-        try:
-            r = httpx.get(url, timeout=10)
-            out[name] = {"ok": True, "status": r.status_code, "seconds": time.time() - t0}
-        except Exception as e:
-            out[name] = {"ok": False, "error": repr(e), "seconds": time.time() - t0}
-
-    t0 = time.time()
-    try:
-        resp = anthropic_client.messages.create(
-            model="claude-sonnet-5", max_tokens=10,
-            thinking={"type": "disabled"},
-            messages=[{"role": "user", "content": "say ok"}],
-        )
-        out["anthropic_call"] = {"ok": True, "text": resp.content[0].text, "seconds": time.time() - t0}
-    except Exception as e:
-        out["anthropic_call"] = {"ok": False, "error": repr(e), "seconds": time.time() - t0}
-
-    t0 = time.time()
-    try:
-        vector = next(_embedder.embed(["test query"])).tolist()
-        results = _index.query(vector=vector, top_k=1, include_metadata=True, timeout=15.0)
-        out["pinecone_call"] = {"ok": True, "matches": len(results.matches), "seconds": time.time() - t0}
-    except Exception as e:
-        out["pinecone_call"] = {"ok": False, "error": repr(e), "seconds": time.time() - t0}
-
-    return jsonify(out)
-
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
