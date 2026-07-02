@@ -60,15 +60,22 @@ def _dedupe_latest(flags):
 
 
 def build_dashboard():
+    import sys
+    import time
+
+    t_start = time.time()
     df = dashboard_data.load_data()
     flags = _dedupe_latest(run_rules(df))
     flags = sorted(flags, key=lambda f: f.materiality, reverse=True)[:MAX_INSIGHTS]
+    print(f"[build] data+rules ready in {time.time() - t_start:.1f}s, {len(flags)} flags", flush=True)
 
     insights = []
-    for flag in flags:
+    for i, flag in enumerate(flags, 1):
+        t0 = time.time()
         try:
             chunks = retrieve_context(flag)
             insights.append(generate_insight(flag, chunks))
+            print(f"[build] flag {i}/{len(flags)} ({flag.rule_id}) ok in {time.time() - t0:.1f}s", flush=True)
         except Exception as e:
             insights.append({
                 "rule_id": flag.rule_id, "channel": flag.channel, "platform": flag.platform,
@@ -77,6 +84,8 @@ def build_dashboard():
                 "why_it_matters": "", "recommended_next_step": "",
                 "source_grounding": f"(insight generation failed: {e})",
             })
+            print(f"[build] flag {i}/{len(flags)} ({flag.rule_id}) FAILED in {time.time() - t0:.1f}s: {e!r}", flush=True)
+    sys.stdout.flush()
 
     return {
         "summary": dashboard_data.summary_stats(df),
