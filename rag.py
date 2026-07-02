@@ -23,7 +23,11 @@ CLAUDE_MODEL = "claude-sonnet-5"
 # by channel instead of by platform string.
 CHANNEL_TO_DOC_PLATFORM = {"programmatic": "programmatic"}
 
-anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+# Explicit timeouts on both clients: a hang here would otherwise block
+# app.py's background build thread indefinitely — each flag's work is
+# wrapped in a try/except there, but only a raised error (not an unbounded
+# wait) gets caught and turned into a fallback insight card.
+anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"), timeout=30.0)
 pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 # Built eagerly at import time (main thread) rather than lazily on first call.
 # ONNX Runtime's session init is unreliable when it first happens on a
@@ -45,6 +49,7 @@ def retrieve_context(flag, top_k: int = 5):
         top_k=top_k,
         include_metadata=True,
         filter={"platform": {"$eq": doc_platform}},
+        timeout=30.0,
     )
     return [match.metadata for match in results.matches]
 
