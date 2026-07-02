@@ -5,6 +5,7 @@ Run: python3 app.py  →  open http://localhost:5000
 import json
 import os
 import re
+import threading
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
@@ -26,6 +27,15 @@ app = Flask(__name__)
 MAX_INSIGHTS = 12
 
 _cache = {}
+# Building the dashboard means ~12 sequential Claude calls (a minute-plus) —
+# far past gunicorn's default 30s worker timeout. Warm it in a background
+# thread at process start so it's usually ready before a real visitor hits
+# "/", and guard with a lock so a request arriving mid-warmup doesn't kick
+# off a second, concurrent build against the same API quota. `_building` is
+# tracked separately from `_cache` so /api/status can tell "a refresh is in
+# progress" apart from "the old cached dashboard is still sitting there."
+_build_lock = threading.Lock()
+_building = False
 
 
 def markdown_bold(text):
@@ -200,8 +210,15 @@ Plotly.newPlot('chart-mix', charts.channel_mix.data, charts.channel_mix.layout, 
 function refresh() {
   const btn = document.querySelector('.refresh-btn');
   btn.disabled = true;
-  btn.textContent = 'Refreshing… (regenerates AI insights, ~30s)';
-  fetch('/api/refresh', {method: 'POST'}).then(() => location.reload());
+  btn.textContent = 'Refreshing… (regenerates AI insights, ~60-90s)';
+  fetch('/api/refresh', {method: 'POST'}).then(pollUntilReady);
+}
+
+function pollUntilReady() {
+  fetch('/api/status').then(r => r.json()).then(data => {
+    if (data.ready) location.reload();
+    else setTimeout(pollUntilReady, 3000);
+  });
 }
 </script>
 </body>
@@ -209,10 +226,48 @@ function refresh() {
 """
 
 
+def _build_in_background():
+    global _building
+    if not _build_lock.acquire(blocking=False):
+        return  # a build is already running — don't start a second one
+    _building = True
+    try:
+        _cache["dashboard"] = build_dashboard()
+    finally:
+        _building = False
+        _build_lock.release()
+
+
+# Warm the cache once at process start so most visitors never see the
+# "building" placeholder below.
+threading.Thread(target=_build_in_background, daemon=True).start()
+
+BUILDING_TEMPLATE = """
+<!DOCTYPE html>
+<html><head><meta http-equiv="refresh" content="5">
+<style>
+  body { background: #0f1117; color: #e4e6f1; font-family: -apple-system, sans-serif;
+         display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+  .box { text-align: center; }
+  .box h1 { font-size: 1.2rem; margin-bottom: 8px; }
+  .box p { color: #8b8fa8; font-size: 0.85rem; }
+</style></head>
+<body><div class="box">
+  <h1>Building the dashboard…</h1>
+  <p>Running the rules engine and generating AI insight cards (~60-90s on first load). This page refreshes automatically.</p>
+</div></body></html>
+"""
+
+
 @app.route("/")
 def index():
     if "dashboard" not in _cache:
-        _cache["dashboard"] = build_dashboard()
+        # Always spawn a thread rather than building inline — the lock makes
+        # a redundant spawn a cheap no-op, but building on the request thread
+        # itself would block this worker for the full ~60-90s, which is
+        # exactly the gunicorn-worker-timeout bug this design avoids.
+        threading.Thread(target=_build_in_background, daemon=True).start()
+        return BUILDING_TEMPLATE
     data = _cache["dashboard"]
     tmpl = _env.from_string(HTML_TEMPLATE)
     return tmpl.render(
@@ -225,11 +280,13 @@ def index():
 
 @app.route("/api/refresh", methods=["POST"])
 def api_refresh():
-    try:
-        _cache["dashboard"] = build_dashboard()
-        return jsonify({"ok": True})
-    except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
+    threading.Thread(target=_build_in_background, daemon=True).start()
+    return jsonify({"ok": True, "status": "building"})
+
+
+@app.route("/api/status")
+def api_status():
+    return jsonify({"ready": "dashboard" in _cache and not _building})
 
 
 @app.route("/api/health")

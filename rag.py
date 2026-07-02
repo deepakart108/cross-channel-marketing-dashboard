@@ -25,31 +25,22 @@ CHANNEL_TO_DOC_PLATFORM = {"programmatic": "programmatic"}
 
 anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-_embedder = None
-_index = None
-
-
-def _get_embedder():
-    global _embedder
-    if _embedder is None:
-        _embedder = TextEmbedding(EMBEDDING_MODEL)
-    return _embedder
-
-
-def _get_index():
-    global _index
-    if _index is None:
-        _index = pinecone_client.Index(PINECONE_INDEX_NAME)
-    return _index
+# Built eagerly at import time (main thread) rather than lazily on first call.
+# ONNX Runtime's session init is unreliable when it first happens on a
+# background thread (app.py builds the dashboard off-thread to avoid
+# blocking gunicorn workers) — constructing it here guarantees that happens
+# on the main thread before any background work starts.
+_embedder = TextEmbedding(EMBEDDING_MODEL)
+_index = pinecone_client.Index(PINECONE_INDEX_NAME)
 
 
 def retrieve_context(flag, top_k: int = 5):
     """Query Pinecone for doc chunks relevant to a rules.Flag's platform."""
     doc_platform = CHANNEL_TO_DOC_PLATFORM.get(flag.channel, flag.platform)
     query = f"{flag.rule_id} {flag.what_happened}"
-    vector = next(_get_embedder().embed([query])).tolist()
+    vector = next(_embedder.embed([query])).tolist()
 
-    results = _get_index().query(
+    results = _index.query(
         vector=vector,
         top_k=top_k,
         include_metadata=True,
