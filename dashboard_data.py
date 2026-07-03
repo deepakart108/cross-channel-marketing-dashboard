@@ -56,7 +56,7 @@ def channel_breakdown(df: pd.DataFrame) -> list[dict]:
             weekly_spend = group.groupby("period_start")["spend"].sum()
             weekly_conv = group.groupby("period_start")["conversions"].sum()
             weekly = weekly_spend / weekly_conv.replace(0, pd.NA)
-            metric_label, metric_fmt = "CPA", "${:.2f}"
+            metric_label, metric_fmt = "CPA", "${:,.2f}"
             higher_is_better = False
 
         trend = "flat"

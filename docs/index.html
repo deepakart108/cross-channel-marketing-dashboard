@@ -53,10 +53,10 @@
   
 
   <div class="grid-4">
-    <div class="card"><h2>Total Spend</h2><div class="stat">$259935</div></div>
+    <div class="card"><h2>Total Spend</h2><div class="stat">$259,935</div></div>
     <div class="card"><h2>Blended CPA</h2><div class="stat">$19.30</div></div>
     <div class="card"><h2>Blended ROAS</h2><div class="stat">2.78x</div></div>
-    <div class="card"><h2>Conversions</h2><div class="stat">13467</div></div>
+    <div class="card"><h2>Conversions</h2><div class="stat">13,467</div></div>
   </div>
 
   <div class="card" style="margin-bottom:20px;">
@@ -65,7 +65,8 @@
       
       <div class="channel-card" style="border-top-color: #6c63ff;">
         <div class="name">meta</div>
-        <div class="spend">$62083</div>
+        <div class="spend">$62,083</div>
+        
         <div class="metric">
           CTR 1.31% &middot; 
           CPA $14.12
@@ -77,7 +78,8 @@
       
       <div class="channel-card" style="border-top-color: #4285F4;">
         <div class="name">google_search</div>
-        <div class="spend">$51774</div>
+        <div class="spend">$51,774</div>
+        
         <div class="metric">
           CTR 5.18% &middot; 
           CPA $39.22
@@ -89,7 +91,8 @@
       
       <div class="channel-card" style="border-top-color: #8b8fa8;">
         <div class="name">Generic DSP</div>
-        <div class="spend">$50985</div>
+        <div class="spend">$50,985</div>
+        
         <div class="metric">
           CTR 0.36% &middot; 
           CPA $50.83
@@ -101,7 +104,8 @@
       
       <div class="channel-card" style="border-top-color: #25F4EE;">
         <div class="name">tiktok</div>
-        <div class="spend">$49860</div>
+        <div class="spend">$49,860</div>
+        
         <div class="metric">
           CTR 1.10% &middot; 
           CPA $15.32
@@ -113,7 +117,8 @@
       
       <div class="channel-card" style="border-top-color: #E60023;">
         <div class="name">pinterest</div>
-        <div class="spend">$29594</div>
+        <div class="spend">$29,594</div>
+        
         <div class="metric">
           CTR 1.01% &middot; 
           CPA $14.83
@@ -125,7 +130,8 @@
       
       <div class="channel-card" style="border-top-color: #FFFC00;">
         <div class="name">snapchat</div>
-        <div class="spend">$15640</div>
+        <div class="spend">$15,640</div>
+        
         <div class="metric">
           CTR 1.01% &middot; 
           CPA $26.43
@@ -137,7 +143,8 @@
       
       <div class="channel-card" style="border-top-color: #FFE01B;">
         <div class="name">mailchimp</div>
-        <div class="spend">$—</div>
+        <div class="spend">N/A</div>
+        <div class="metric" style="font-style: italic;">No ad spend &mdash; engagement metrics only</div>
         <div class="metric">
           
           Open Rate 14.9%
@@ -158,97 +165,97 @@
         <div class="insight-card">
           <div class="meta-row">email list dilution &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
           <div class="what">Send volume rose from 71400 to 86099 while open rate fell from 18.1% to 14.9% — possible list dilution.</div>
-          <div class="why">This is the exact warning pattern Mailchimp&#39;s List health guidance describes: a send-volume increase coinciding with a falling open rate signals list dilution or a relevance/cadence mismatch, and if unaddressed the guidance notes it tends to progress into a rising unsubscribe rate as the downstream confirmation. At 14.9%, open rate is also now well below the all-industry blended average of 35.63%, though the guidance cautions to weigh this against the list&#39;s own trailing baseline rather than the industry figure alone.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull click rate for the same period alongside unsubscribe rate trailing average — since click rate is less distorted by Apple MPP inflation/suppression, use it to confirm whether the open-rate drop reflects real engagement decline versus tracking noise, and check whether the newly added subscribers (the volume increase from 71,400 to 86,099) are a distinct cohort with lower open rates than the existing base.</div>
-          <div class="source">mailchimp_email.md › List health; mailchimp_email.md › Metric definitions; mailchimp_email.md › Benchmark averages (all-industry, Mailchimp data)</div>
+          <div class="why">This send-volume increase (71,400 to 86,099) coinciding with a falling open rate (18.1% to 14.9%) matches the exact pattern Mailchimp&#39;s own List health guidance calls its &#39;list-quality warning pattern&#39; — sending more to a list diluted with lower-intent signups or at a cadence beyond what subscribers opted into. Left unaddressed, this same guidance notes the pattern typically progresses to a rising unsubscribe rate as the downstream confirmation that content or cadence no longer matches subscriber expectations.</div>
+          <div class="next-step"><strong>Next step:</strong> Segment the newly added subscribers (the ~14,699 driving the volume increase) from the existing list and compare their open and click rates against the trailing baseline of the pre-existing list; if the new segment shows materially lower engagement, pause sending the Weekly Newsletter to that segment and check click rate as a cross-check before deciding whether to suppress or re-permission them, since Mailchimp&#39;s Metric definitions note click rate is less distorted by Apple MPP inflation/suppression than open rate.</div>
+          <div class="source">mailchimp_email.md › List health (for the dilution/cadence warning pattern and unsubscribe as downstream confirmation); mailchimp_email.md › Metric definitions (for using click rate as a more trustworthy cross-check and comparing against the list&#39;s own trailing baseline rather than industry benchmarks).</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cross channel acquisition gap &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
           <div class="what">Paid social spend spiked 1-2 weeks prior and email open rate is now declining (21.3% -&gt; 18.1%) — possible acquisition-to-activation gap.</div>
-          <div class="why">The timing lines up with Mailchimp&#39;s list-quality warning pattern: an influx of new signups from paid social (effectively a send-volume/list-growth increase) coinciding with a falling open rate (21.3% → 18.1%) suggests these newly acquired contacts may be lower-intent than the organic list, diluting overall engagement — and per the List health guidance, a rising unsubscribe rate is often the downstream confirmation if this isn&#39;t addressed.</div>
-          <div class="next-step"><strong>Next step:</strong> Segment the list by acquisition source and compare open/click rates for the paid-social-acquired cohort against the trailing baseline for pre-existing subscribers; since open rate can be inflated or suppressed by Apple MPP, use click rate as the more trustworthy signal to confirm whether the new cohort is genuinely less engaged before adjusting onboarding emails or suppressing/re-permissioning that segment.</div>
-          <div class="source">mailchimp_email.md › List health (send-volume increase coinciding with falling open rate as a list-quality warning, unsubscribe spike as downstream confirmation); mailchimp_email.md › Metric definitions (Apple MPP inflating opens, click rate as more trustworthy signal, and comparing against a list&#39;s own trailing baseline rather than industry averages).</div>
+          <div class="why">The timing suggests the paid social spike may have added lower-intent signups to the list, and per the List health guidance, diluting a list this way &#39;shows up first as a falling open rate and later as a rising unsubscribe rate&#39; — meaning the 21.3% to 18.1% decline could be an early warning that recently-acquired subscribers aren&#39;t matching what the list was built for, with unsubscribe growth potentially next. This also means engagement and deliverability quality for the whole list may erode if not addressed before the next send.</div>
+          <div class="next-step"><strong>Next step:</strong> Segment the list by signup date to isolate subscribers acquired during the paid social spike window, then compare their open and click rates against the trailing baseline of pre-existing subscribers — since click rate is &#39;less distorted by MPP than open rate&#39; per the Metric definitions guidance, use click rate as the primary signal to confirm whether the new cohort is genuinely less engaged before adjusting acquisition targeting or onboarding cadence for that segment.</div>
+          <div class="source">mailchimp_email.md › List health (for the acquisition-dilution/falling-open-rate pattern and unsubscribe as downstream confirmation); mailchimp_email.md › Metric definitions (for using click rate over open rate given MPP distortion, and comparing against trailing baseline rather than industry average)</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">unsubscribe spike &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
           <div class="what">Unsubscribes hit 299, over 2x the trailing average of 60 — likely a content or send-cadence mismatch.</div>
-          <div class="why">Per the List health guidance, an unsubscribe spike well above trailing average is the &#39;downstream confirmation that content or cadence stopped matching what the list signed up for&#39; — at 299 unsubscribes (2x the trailing average of 60), this signals a relevance/cadence mismatch that will erode list quality and future deliverability if unaddressed.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull the open rate trend for this list over the sends leading up to 2026-06-15 — per the List health guidance, a falling open rate paired with a send-volume increase is the platform&#39;s own early warning pattern preceding an unsubscribe spike; if open rate was declining beforehand, revert this campaign&#39;s send frequency and content style back to the last baseline period where opens/unsubscribes were normal before sending the next Weekly Newsletter.</div>
-          <div class="source">mailchimp_email.md › List health</div>
+          <div class="why">Per Mailchimp&#39;s List health guidance, an unsubscribe spike well above trailing average is the &#39;downstream confirmation that content or cadence stopped matching what the list signed up for&#39; — at 299 vs. a trailing average of 60 (over 2x, and far above the 0.22% all-industry unsubscribe benchmark), this signals a relevance breakdown that will progressively erode list quality and future reach if the underlying cause isn&#39;t addressed.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the open and click rates for this June 15 Weekly Newsletter send and compare them against this list&#39;s own trailing baseline (not the industry average) to check for the falling-open-rate pattern the guidance flags as preceding unsubscribe spikes; if open rate also dropped, review whether send frequency or content type changed recently versus prior sends and roll back that specific change for the next cycle.</div>
+          <div class="source">mailchimp_email.md › List health; mailchimp_email.md › Benchmark averages (all-industry, Mailchimp data); mailchimp_email.md › Metric definitions</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; google_search / Non-Brand - Category Terms &middot; materiality 0.63</div>
           <div class="what">CPA rose 72% week-over-week, from $20.97 to $36.08.</div>
-          <div class="why">A 72% week-over-week CPA jump on Non-Brand - Category Terms means each conversion is now costing substantially more, which will erode ROI on this campaign if left unaddressed. Per the guidance, sudden shifts like this typically trace back to either impression share erosion (budget constraints, competitiveness, or Quality Score regression) or a Quality Score decline driven by below-average Expected CTR, ad relevance, or landing page experience.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for the top-spending keywords in this campaign for the 2026-06-22 to 2026-06-28 window and compare against the prior week to identify which component regressed and whether it coincides with an impression share drop, rather than treating Quality Score itself as a KPI to optimize directly.</div>
-          <div class="source">google_ads_search.md › Quality Score; google_ads_search.md › Impression share</div>
+          <div class="why">A 72% week-over-week CPA increase in Non-Brand - Category Terms means the campaign is spending significantly more to acquire each conversion, which erodes efficiency and budget headroom fast. Per the Impression Share guidance, a sudden shift like this with no corresponding budget or bid change points toward rising competition or a Quality Score regression rather than a self-inflicted cause, so the root driver needs to be isolated before spend continues at the new, less efficient rate.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for this campaign&#39;s top-spending terms over the flagged week and compare against the prior period to identify whether a below-average Expected CTR component (e.g., from ad copy mismatched to query intent) coincides with the CPA spike, then check impression share trends for the same keywords to rule out increased competition as the driver.</div>
+          <div class="source">google_ads_search.md › Impression share; google_ads_search.md › Quality Score</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">search impression share drop &middot; google_search / Non-Brand - Category Terms &middot; materiality 0.63</div>
           <div class="what">Search impression share dropped from 67.8% to 53.3% on flat spend — likely rising competition or a Quality Score drop.</div>
-          <div class="why">A 14.5-point impression share drop on flat spend means the campaign is now losing a substantially larger share of eligible auctions, which directly caps reach and volume for Non-Brand - Category Terms. Per the guidance, since there&#39;s no corresponding budget or bid change, this pattern &#39;points toward rising competition or a Quality Score regression rather than a self-inflicted cause,&#39; meaning the loss is likely coming from competitors or an ad quality decline rather than a controllable spend decision.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score breakdown for this campaign and check whether Expected CTR has shifted to &#39;Below average&#39; — since the guidance notes a low CTR is &#39;one of the clearest below-average signals&#39; for that component, often caused by ad copy misaligned with query intent or overly broad targeting; if CTR is down, rewrite ad copy to more tightly match the top query themes in these category terms.</div>
-          <div class="source">google_ads_search.md › Impression share (for the competitive/no-bid-change reasoning); google_ads_search.md › Quality Score (for the Expected CTR / low-CTR diagnostic).</div>
+          <div class="why">A drop of this size (67.8% to 53.3%) on flat spend means the campaign is losing visibility in a meaningful share of eligible auctions it used to win, which directly reduces the volume of impressions and downstream clicks/conversions this category-terms campaign can generate. Per the guidance, since there&#39;s no corresponding budget or bid change, this sudden sizeable drop points toward rising competition or a Quality Score regression rather than a self-inflicted cause.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score history for this campaign over the affected week and check whether the Expected CTR component has moved to &#39;Below average&#39; — if so, review and refresh ad copy for the underperforming keywords to better match query intent before considering bid increases to counter competitive pressure.</div>
+          <div class="source">google_ads_search.md › Impression share; google_ads_search.md › Quality Score</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; pinterest / Shopping Ads - Catalog Sales &middot; materiality 0.60</div>
           <div class="what">CPA rose 25% week-over-week, from $11.88 to $14.82.</div>
-          <div class="why">A 25% week-over-week jump in CPA on a Shopping Ads catalog campaign means you&#39;re paying substantially more per acquisition, and Pinterest&#39;s Path to Performance framework indicates that for catalog/shopping campaigns specifically, performance problems like this often trace back to feed and signal quality issues rather than creative degradation.</div>
-          <div class="next-step"><strong>Next step:</strong> Audit the catalog feed ingestion status and event signal quality (e.g., purchase/conversion event matching) in the Path to Performance scorecard for this campaign to identify feed or signal health issues before adjusting bids or creative.</div>
+          <div class="why">A 25% week-over-week CPA jump on this Shopping Ads catalog campaign means Pinterest is charging significantly more to generate each conversion, which erodes ROI on catalog sales spend. Per Pinterest&#39;s Path to Performance framework, catalog/shopping campaign performance issues typically trace back to feed ingestion and signal (event) quality rather than creative, making this a likely place to start investigating.</div>
+          <div class="next-step"><strong>Next step:</strong> Check the Path to Performance scorecard for this catalog to review signal health (event quality) and feed ingestion/feed health status, since degradation in either can drive up CPA on catalog sales campaigns.</div>
           <div class="source">pinterest_ads.md › Path to Performance</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; snapchat / Snap Ads - Prospecting &middot; materiality 0.58</div>
           <div class="what">CPA rose 20% week-over-week, from $24.68 to $29.66.</div>
-          <div class="why">A 20% week-over-week CPA jump on Snap Ads - Prospecting is consistent with the platform-native fatigue pattern Snap describes: rising frequency against flat reach means the same audience is absorbing delivery instead of the campaign finding fresh users, and this typically shows up first as declining swipe rate before compounding into higher CPA.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for the Snap Ads - Prospecting campaign over the past two weeks; if frequency is climbing while reach is flat and swipe rate is declining, refresh creative and expand or rotate the audience to restore fresh reach.</div>
-          <div class="source">snapchat_ads.md › Paid frequency; snapchat_ads.md › Swipe rate (CTR); snapchat_ads.md › Cost and frequency together</div>
+          <div class="why">A 20% week-over-week CPA jump on Snap Ads - Prospecting means you&#39;re paying more to acquire each result, and per Snap&#39;s own guidance this pattern is the platform-native sign of ad fatigue: &#39;over-indexing on impressions while ignoring frequency&#39; causes performance to decay even while impression volume looks healthy, and rising CPA is exactly the downstream effect of that decay.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for this campaign over the same week — if frequency climbed while reach stayed flat and swipe rate declined, that confirms the fatigue signature, and you should refresh creative or expand/exclude audience segments to restore fresh reach rather than adjusting bids alone.</div>
+          <div class="source">snapchat_ads.md › Cost and frequency together; snapchat_ads.md › Paid frequency; snapchat_ads.md › Swipe rate (CTR)</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; tiktok / In-Feed - Core Prospecting &middot; materiality 0.56</div>
           <div class="what">CPA rose 50% week-over-week, from $13.44 to $20.21 (alongside declining CTR).</div>
-          <div class="why">A 50% CPA jump alongside declining CTR matches TikTok&#39;s own definition of creative fatigue setting in — &#34;a consistently declining trend&#34; in delivery results (When to refresh creative) — meaning the In-Feed - Core Prospecting campaign is likely burning budget on an audience that has stopped responding to current creative, driving costs up as efficiency erodes.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull up Video Insights for the In-Feed - Core Prospecting ad group to identify which specific creative(s) are degrading, then add 3-5 new diversified creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery without resetting the learning phase.</div>
+          <div class="why">A 50% week-over-week CPA increase alongside declining CTR matches TikTok&#39;s own definition of fatigue setting in — &#34;a consistently declining trend&#34; in delivery results (When to refresh creative) — meaning the ad group&#39;s creative is likely wearing out and driving up acquisition costs in In-Feed - Core Prospecting.</div>
+          <div class="next-step"><strong>Next step:</strong> Open Video Insights to identify which specific creative(s) in the ad group are degrading, then add 3-5 new creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery while preserving the ad group&#39;s learning.</div>
           <div class="source">tiktok_ads.md › When to refresh creative; tiktok_ads.md › Tooling; tiktok_ads.md › Structure</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; Generic DSP / CTV - Streaming Inventory &middot; materiality 0.56</div>
           <div class="what">CPA rose 31% week-over-week, from $43.48 to $57.04 (alongside declining CTR).</div>
-          <div class="why">A 31% week-over-week CPA increase alongside declining CTR on CTV inventory raises efficiency concerns, but the provided guidance only addresses viewability as a placement/inventory quality signal — it does not directly cover CPA or CTR mechanics, so the cost impact here cannot be tied to a specific documented cause.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull the viewability report for this CTV placement and check whether it sits well under the ~50% MRC pass threshold (not just below the ~96% CTV/display network average); if so, treat it as an inventory/placement quality issue and audit the supply-side partners and specific placements feeding this campaign rather than adjusting creative or targeting.</div>
+          <div class="why">A 31% week-over-week CPA increase alongside declining CTR on CTV inventory means the campaign is spending significantly more to acquire the same outcomes, eroding efficiency; however, the provided guidance only addresses viewability standards and does not directly cover CPA or CTR drivers, so the business impact of the cost/efficiency trend itself cannot be fully grounded in the excerpts.</div>
+          <div class="next-step"><strong>Next step:</strong> Since CTV/display inventory benchmarks at ~96% viewability per the guidance, pull a viewability report for this specific CTV placement to confirm it is not sitting well under that benchmark or under the ~50% MRC pass threshold, which per the guidance would point to an inventory/placement quality problem rather than a creative or targeting issue contributing to the CPA rise.</div>
           <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; Generic DSP / Display - Contextual Network &middot; materiality 0.44</div>
           <div class="what">CPA rose 116% week-over-week, from $38.79 to $83.61 (alongside declining CTR).</div>
-          <div class="why">A 116% week-over-week CPA increase alongside declining CTR means the campaign is spending significantly more to acquire the same conversions, eroding efficiency and budget performance on the Display - Contextual Network campaign.</div>
-          <div class="next-step"><strong>Next step:</strong> Pull an MRC-accredited viewability report broken out by placement for this campaign and identify any desktop banner or below-the-fold slots sitting well under the ~50% MRC pass threshold, then pause or exclude those low-viewability placements, since the guidance indicates sub-threshold viewability reflects an inventory/placement quality problem rather than creative or targeting issues.</div>
+          <div class="why">A 116% week-over-week CPA spike alongside declining CTR means the campaign is spending significantly more to acquire each conversion while engagement is deteriorating, eroding efficiency and budget effectiveness on the Display - Contextual Network line. The provided guidance notes that viewability issues (placements well under the ~50% MRC pass threshold) reflect an inventory/placement quality problem rather than a creative or targeting issue, so if viewability has degraded, it could be a contributing factor to fewer effective impressions driving conversions.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the MRC-accredited viewability report for this placement broken out by supply-side partner and compare it against the ~50% MRC pass threshold and the ~64% desktop banner benchmark cited in the guidance; pause or renegotiate any below-the-fold or low-quality supply partners found sitting well under that threshold.</div>
           <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">programmatic viewability &middot; Generic DSP / Display - Contextual Network &middot; materiality 0.44</div>
           <div class="what">Viewability is 39%, below the 50% floor.</div>
-          <div class="why">At 39% viewability, this placement falls well below the 50% MRC pass threshold and far under the 72% cross-network average, meaning a majority of served impressions never had a real chance to be seen — advertisers are effectively paying for impressions that don&#39;t meet the industry&#39;s baseline definition of a viewable ad. Per the guidance, this pattern points to an inventory/placement quality problem (e.g., below-the-fold slots or low-quality supply-side partners) rather than a creative or targeting issue.</div>
-          <div class="next-step"><strong>Next step:</strong> Audit the Display - Contextual Network placement list to identify and exclude specific below-the-fold or low-quality supply-side partner placements driving the 39% rate, then reallocate that budget to inventory sources performing closer to the ~64% desktop banner or ~81% native benchmarks.</div>
+          <div class="why">At 39%, this placement falls well under the 50% MRC pass threshold and far below the 64% desktop banner floor and 72% cross-network average, meaning the majority of served impressions never had a real chance to be seen — this is being paid for exposure that largely doesn&#39;t occur, and per the guidance this points specifically to an inventory/placement quality problem rather than a creative or targeting issue.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull a placement-level viewability breakdown from the contextual network&#39;s supply path for this campaign, identify and exclude/block the specific below-the-fold slots or low-quality supply-side partners driving the 39% figure, and reallocate that budget to inventory sources already clearing at least the 50% MRC threshold.</div>
           <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
         </div>
         
         <div class="insight-card">
           <div class="meta-row">cpa spike &middot; meta / Prospecting - Broad &middot; materiality 0.44</div>
           <div class="what">CPA rose 53% week-over-week, from $10.26 to $15.73 (alongside declining CTR).</div>
-          <div class="why">A 53% week-over-week CPA increase paired with declining CTR on this cold prospecting campaign is the pattern the guidance associates with creative fatigue — as an audience sees the same creative too often, performance declines, driving up acquisition costs. If this pattern continues unaddressed, Prospecting - Broad will keep becoming less efficient at the same or higher spend.</div>
-          <div class="next-step"><strong>Next step:</strong> Check the frequency metric for Prospecting - Broad against the cold prospecting benchmark (healthy: 1.5–2.5, warning: 3.0–4.0); if it&#39;s in or above the warning zone, add 3–5 new creative variations to this campaign before considering any audience expansion.</div>
-          <div class="source">meta_ads.md › Creative fatigue</div>
+          <div class="why">A 53% week-over-week CPA increase alongside declining CTR on a cold prospecting campaign matches the pattern the guidance associates with creative fatigue, where &#39;performance begins to decline&#39; as an audience over-exposed to the same creative disengages — meaning ad spend is increasingly wasted on an audience that&#39;s stopped responding.</div>
+          <div class="next-step"><strong>Next step:</strong> Check the campaign&#39;s frequency metric against the cold prospecting benchmark (healthy 1.5–2.5, warning zone 3.0–4.0); if frequency is elevated, add 3–5 new creative variations rather than expanding the audience, and cross-check Ad Relevance Diagnostics — a drop in Quality or Engagement Rate Ranking would confirm a creative/audience-fit problem versus a landing-page/offer issue.</div>
+          <div class="source">meta_ads.md › Creative fatigue; meta_ads.md › Ad Relevance Diagnostics</div>
         </div>
         
       </div>
@@ -258,51 +265,51 @@
       <ul class="actions-list">
         
         
-        <li><span class="tag">mailchimp</span>Pull click rate for the same period alongside unsubscribe rate trailing average — since click rate is less distorted by Apple MPP inflation/suppression, use it to confirm whether the open-rate drop reflects real engagement decline versus tracking noise, and check whether the newly added subscribers (the volume increase from 71,400 to 86,099) are a distinct cohort with lower open rates than the existing base.</li>
+        <li><span class="tag">mailchimp</span>Segment the newly added subscribers (the ~14,699 driving the volume increase) from the existing list and compare their open and click rates against the trailing baseline of the pre-existing list; if the new segment shows materially lower engagement, pause sending the Weekly Newsletter to that segment and check click rate as a cross-check before deciding whether to suppress or re-permission them, since Mailchimp&#39;s Metric definitions note click rate is less distorted by Apple MPP inflation/suppression than open rate.</li>
         
         
         
-        <li><span class="tag">mailchimp</span>Segment the list by acquisition source and compare open/click rates for the paid-social-acquired cohort against the trailing baseline for pre-existing subscribers; since open rate can be inflated or suppressed by Apple MPP, use click rate as the more trustworthy signal to confirm whether the new cohort is genuinely less engaged before adjusting onboarding emails or suppressing/re-permissioning that segment.</li>
+        <li><span class="tag">mailchimp</span>Segment the list by signup date to isolate subscribers acquired during the paid social spike window, then compare their open and click rates against the trailing baseline of pre-existing subscribers — since click rate is &#39;less distorted by MPP than open rate&#39; per the Metric definitions guidance, use click rate as the primary signal to confirm whether the new cohort is genuinely less engaged before adjusting acquisition targeting or onboarding cadence for that segment.</li>
         
         
         
-        <li><span class="tag">mailchimp</span>Pull the open rate trend for this list over the sends leading up to 2026-06-15 — per the List health guidance, a falling open rate paired with a send-volume increase is the platform&#39;s own early warning pattern preceding an unsubscribe spike; if open rate was declining beforehand, revert this campaign&#39;s send frequency and content style back to the last baseline period where opens/unsubscribes were normal before sending the next Weekly Newsletter.</li>
+        <li><span class="tag">mailchimp</span>Pull the open and click rates for this June 15 Weekly Newsletter send and compare them against this list&#39;s own trailing baseline (not the industry average) to check for the falling-open-rate pattern the guidance flags as preceding unsubscribe spikes; if open rate also dropped, review whether send frequency or content type changed recently versus prior sends and roll back that specific change for the next cycle.</li>
         
         
         
-        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for the top-spending keywords in this campaign for the 2026-06-22 to 2026-06-28 window and compare against the prior week to identify which component regressed and whether it coincides with an impression share drop, rather than treating Quality Score itself as a KPI to optimize directly.</li>
+        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for this campaign&#39;s top-spending terms over the flagged week and compare against the prior period to identify whether a below-average Expected CTR component (e.g., from ad copy mismatched to query intent) coincides with the CPA spike, then check impression share trends for the same keywords to rule out increased competition as the driver.</li>
         
         
         
-        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score breakdown for this campaign and check whether Expected CTR has shifted to &#39;Below average&#39; — since the guidance notes a low CTR is &#39;one of the clearest below-average signals&#39; for that component, often caused by ad copy misaligned with query intent or overly broad targeting; if CTR is down, rewrite ad copy to more tightly match the top query themes in these category terms.</li>
+        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score history for this campaign over the affected week and check whether the Expected CTR component has moved to &#39;Below average&#39; — if so, review and refresh ad copy for the underperforming keywords to better match query intent before considering bid increases to counter competitive pressure.</li>
         
         
         
-        <li><span class="tag">pinterest</span>Audit the catalog feed ingestion status and event signal quality (e.g., purchase/conversion event matching) in the Path to Performance scorecard for this campaign to identify feed or signal health issues before adjusting bids or creative.</li>
+        <li><span class="tag">pinterest</span>Check the Path to Performance scorecard for this catalog to review signal health (event quality) and feed ingestion/feed health status, since degradation in either can drive up CPA on catalog sales campaigns.</li>
         
         
         
-        <li><span class="tag">snapchat</span>Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for the Snap Ads - Prospecting campaign over the past two weeks; if frequency is climbing while reach is flat and swipe rate is declining, refresh creative and expand or rotate the audience to restore fresh reach.</li>
+        <li><span class="tag">snapchat</span>Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for this campaign over the same week — if frequency climbed while reach stayed flat and swipe rate declined, that confirms the fatigue signature, and you should refresh creative or expand/exclude audience segments to restore fresh reach rather than adjusting bids alone.</li>
         
         
         
-        <li><span class="tag">tiktok</span>Pull up Video Insights for the In-Feed - Core Prospecting ad group to identify which specific creative(s) are degrading, then add 3-5 new diversified creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery without resetting the learning phase.</li>
+        <li><span class="tag">tiktok</span>Open Video Insights to identify which specific creative(s) in the ad group are degrading, then add 3-5 new creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery while preserving the ad group&#39;s learning.</li>
         
         
         
-        <li><span class="tag">Generic DSP</span>Pull the viewability report for this CTV placement and check whether it sits well under the ~50% MRC pass threshold (not just below the ~96% CTV/display network average); if so, treat it as an inventory/placement quality issue and audit the supply-side partners and specific placements feeding this campaign rather than adjusting creative or targeting.</li>
+        <li><span class="tag">Generic DSP</span>Since CTV/display inventory benchmarks at ~96% viewability per the guidance, pull a viewability report for this specific CTV placement to confirm it is not sitting well under that benchmark or under the ~50% MRC pass threshold, which per the guidance would point to an inventory/placement quality problem rather than a creative or targeting issue contributing to the CPA rise.</li>
         
         
         
-        <li><span class="tag">Generic DSP</span>Pull an MRC-accredited viewability report broken out by placement for this campaign and identify any desktop banner or below-the-fold slots sitting well under the ~50% MRC pass threshold, then pause or exclude those low-viewability placements, since the guidance indicates sub-threshold viewability reflects an inventory/placement quality problem rather than creative or targeting issues.</li>
+        <li><span class="tag">Generic DSP</span>Pull the MRC-accredited viewability report for this placement broken out by supply-side partner and compare it against the ~50% MRC pass threshold and the ~64% desktop banner benchmark cited in the guidance; pause or renegotiate any below-the-fold or low-quality supply partners found sitting well under that threshold.</li>
         
         
         
-        <li><span class="tag">Generic DSP</span>Audit the Display - Contextual Network placement list to identify and exclude specific below-the-fold or low-quality supply-side partner placements driving the 39% rate, then reallocate that budget to inventory sources performing closer to the ~64% desktop banner or ~81% native benchmarks.</li>
+        <li><span class="tag">Generic DSP</span>Pull a placement-level viewability breakdown from the contextual network&#39;s supply path for this campaign, identify and exclude/block the specific below-the-fold slots or low-quality supply-side partners driving the 39% figure, and reallocate that budget to inventory sources already clearing at least the 50% MRC threshold.</li>
         
         
         
-        <li><span class="tag">meta</span>Check the frequency metric for Prospecting - Broad against the cold prospecting benchmark (healthy: 1.5–2.5, warning: 3.0–4.0); if it&#39;s in or above the warning zone, add 3–5 new creative variations to this campaign before considering any audience expansion.</li>
+        <li><span class="tag">meta</span>Check the campaign&#39;s frequency metric against the cold prospecting benchmark (healthy 1.5–2.5, warning zone 3.0–4.0); if frequency is elevated, add 3–5 new creative variations rather than expanding the audience, and cross-check Ad Relevance Diagnostics — a drop in Quality or Engagement Rate Ranking would confirm a creative/audience-fit problem versus a landing-page/offer issue.</li>
         
         
       </ul>

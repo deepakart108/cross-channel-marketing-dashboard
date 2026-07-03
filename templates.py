@@ -79,10 +79,10 @@ DASHBOARD_TEMPLATE = """
   {% endif %}
 
   <div class="grid-4">
-    <div class="card"><h2>Total Spend</h2><div class="stat">${{ "%.0f"|format(summary.total_spend) }}</div></div>
-    <div class="card"><h2>Blended CPA</h2><div class="stat">${{ "%.2f"|format(summary.blended_cpa) }}</div></div>
+    <div class="card"><h2>Total Spend</h2><div class="stat">{{ "${:,.0f}".format(summary.total_spend) }}</div></div>
+    <div class="card"><h2>Blended CPA</h2><div class="stat">{{ "${:,.2f}".format(summary.blended_cpa) }}</div></div>
     <div class="card"><h2>Blended ROAS</h2><div class="stat">{{ "%.2f"|format(summary.blended_roas) }}x</div></div>
-    <div class="card"><h2>Conversions</h2><div class="stat">{{ "%.0f"|format(summary.total_conversions) }}</div></div>
+    <div class="card"><h2>Conversions</h2><div class="stat">{{ "{:,.0f}".format(summary.total_conversions) }}</div></div>
   </div>
 
   <div class="card" style="margin-bottom:20px;">
@@ -91,7 +91,8 @@ DASHBOARD_TEMPLATE = """
       {% for c in channels %}
       <div class="channel-card" style="border-top-color: {{ c.color }};">
         <div class="name">{{ c.platform }}</div>
-        <div class="spend">${{ "%.0f"|format(c.spend) if c.spend else "—" }}</div>
+        <div class="spend">{{ "${:,.0f}".format(c.spend) if c.spend else "N/A" }}</div>
+        {% if not c.spend %}<div class="metric" style="font-style: italic;">No ad spend &mdash; engagement metrics only</div>{% endif %}
         <div class="metric">
           {% if c.ctr %}CTR {{ "%.2f"|format(c.ctr) }}% &middot; {% endif %}
           {{ c.metric_label }} {{ c.metric_value }}
