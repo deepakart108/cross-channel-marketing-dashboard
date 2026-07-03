@@ -1,46 +1,105 @@
 # Cross-Channel Marketing Performance Dashboard
 
-Ingests exported performance data from multiple marketing channels (paid social, paid search,
-programmatic, email), normalizes it into a unified schema, runs it through a domain-expert
-rules engine, and uses Claude (grounded via RAG on official platform documentation) to generate
-prioritized, cross-channel insights and recommended next steps — automating the manual
-weekly/quarterly reporting process used at marketing agencies.
+**[Live demo](https://deepakart108.github.io/cross-channel-marketing-dashboard/)**
 
-**Architecture:** ingest → normalize → rules engine → AI-enrich (RAG-grounded) → dashboard.
+Ingests exported performance data from 7 marketing channels (paid social, paid search,
+programmatic, email), normalizes it into a unified schema, runs it through a domain-expert
+rules engine, and uses Claude — grounded via RAG on real official platform documentation — to
+generate prioritized, cross-channel insights with recommended next steps. Built to replace the
+manual weekly/quarterly reporting process used at marketing agencies with an auditable,
+repeatable pipeline.
+
+## Why this isn't "just paste a CSV into ChatGPT"
+
+- **The rules engine decides what's worth flagging — the AI only explains it.** 10 deterministic
+  rules (creative fatigue, CPA spikes, CTR underperformance, email list dilution, cross-channel
+  acquisition gaps, etc.) run against the data first. Claude never invents a conclusion; it
+  narrates one the rules engine already reached.
+- **Every recommendation is grounded and cited.** The RAG layer retrieves real excerpts from
+  Meta Business Help Center, Google Ads Help, TikTok For Business, Pinterest Business, Snap
+  Business Help, Mailchimp Help, and IAB/MRC viewability standards, and Claude cites which
+  excerpt informed each recommendation — see `docs/platform_guidance/` for the source corpus.
+  each recommendation.
+- **A materiality threshold keeps it curated, not chatty** — only flags whose campaign
+  represents a meaningful share of its platform's spend surface, instead of one card per minor
+  weekly blip.
+
+## Architecture
+
+```
+raw exports (CSV/Excel)
+      ↓  ingest/normalize.py   (per-channel column mapping)
+unified schema (ingest/schema.py)
+      ↓  rules.py              (10 domain-expert rules + materiality filter)
+flagged campaigns
+      ↓  rag.py                (Pinecone retrieval, filtered by platform)
+      ↓  Claude (Sonnet 5)     (why it matters / next step / source citation)
+insight cards + dashboard (templates.py)
+```
 
 ## Channels in scope
 Meta (Facebook/Instagram) Ads, Google Ads (Search), TikTok Ads, Pinterest Ads, Snapchat Ads,
 Programmatic/DSP (generic schema), Mailchimp (email).
 
 ## Stack
-- Backend: Python / Flask
-- AI: Claude API (Sonnet)
-- Vector store: Pinecone (RAG over platform documentation)
-- Frontend: dark-theme dashboard
-- Hosting: Railway
+- Backend / pipeline: Python, Pandas, Flask (local dev only — see Hosting below)
+- AI: Claude API (Sonnet 5), structured JSON output
+- Vector store: Pinecone, integrated server-side embedding (`multilingual-e5-large`) — no local
+  embedding model runs in-process
+- Charts: Plotly (renders client-side from embedded JSON)
+
+## Hosting
+
+The published site is a **static HTML snapshot** — `generate_static_site.py` runs the full
+pipeline once (ingest → rules → RAG → Claude) and renders the result to `docs/index.html`,
+published via GitHub Pages. There's no live server: no cold starts, no request-time API costs,
+nothing to crash. To refresh the published insights, re-run the generator and commit the
+updated file.
+
+A live, interactive local server (`app.py`) is also included for development — it re-runs the
+same pipeline against a running Flask app so you can iterate on rules/prompts/UI without
+regenerating the static file each time.
 
 ## Setup
 ```bash
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env   # fill in ANTHROPIC_API_KEY, PINECONE_API_KEY
-python3 app.py          # http://localhost:5000
+python3 ingest_docs.py         # one-time: embed platform guidance docs into Pinecone
+python3 data/generate_sample_data.py   # generate the synthetic demo exports
+
+python3 app.py                        # local dev server → http://localhost:5000
+# — or —
+python3 generate_static_site.py       # regenerate docs/index.html for GitHub Pages
 ```
 
 ## Project layout
 ```
-app.py              Flask dashboard
-rules.py             Domain-expert rules engine
-rag.py                RAG retrieval + Claude insight generation
+pipeline.py                 Shared build: ingest -> rules -> RAG -> Claude, used by both
+                             the local dev server and the static site generator
+templates.py                 Dashboard HTML template (shared, live vs. static toggle)
+app.py                       Local dev Flask server
+generate_static_site.py       Renders docs/index.html for GitHub Pages
+dashboard_data.py             Summary stats, channel breakdown, Plotly chart data
+rules.py                     Domain-expert rules engine (10 rules + materiality filter)
+rag.py                        Pinecone retrieval + Claude insight generation
 ingest/
-  schema.py           Unified schema definition
-  normalize.py        Per-channel export normalizers
-data/sample_exports/  Sample/demo CSV & Excel exports
+  schema.py                  Unified schema definition
+  normalize.py                Per-channel export normalizers
+  load.py                     Loads + normalizes every file in data/sample_exports/
+data/
+  generate_sample_data.py      Synthetic demo exports with deliberate anomalies
+  sample_exports/              Generated CSV/Excel exports (real per-platform column formats)
+docs/
+  platform_guidance/            Source corpus for RAG grounding (cited in every insight)
+  index.html                   Published static dashboard (GitHub Pages root)
+ingest_docs.py                Chunks docs/platform_guidance/ into Pinecone
 ```
 
-## Status
-Scaffolding only — ingestion normalizers, rules, and RAG pipeline are stubbed pending
-implementation. See `marketing-dashboard-build-spec.md` for the full build spec.
+## Note on the data
+The channel exports are synthetic, generated by `data/generate_sample_data.py` to mimic each
+platform's real export format — not real client data. A deliberate anomaly is baked into each
+channel (e.g. Meta creative fatigue, a Google Ads impression-share drop, Mailchimp list
+dilution) so the rules engine has real signals to catch for demo purposes.
 
-## Live link
-TBD
+See `marketing-dashboard-build-spec.md` for the full original build spec.

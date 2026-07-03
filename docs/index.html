@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Channel Marketing Performance Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d2e; --border: #2a2d3e;
+    --text: #e4e6f1; --muted: #8b8fa8; --accent: #6c63ff;
+    --good: #2ecc71; --bad: #ff5c5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 24px; }
+  h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+  .note { color: var(--muted); font-size: 0.78rem; margin-bottom: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display: inline-block; }
+  .refresh-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.8rem; cursor: pointer; margin-bottom: 20px; }
+  .refresh-btn:disabled { opacity: 0.5; cursor: wait; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card h2 { font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
+  .stat { font-size: 1.7rem; font-weight: 700; }
+  .channel-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .channel-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; border-top: 3px solid; }
+  .channel-card .name { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .channel-card .spend { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+  .channel-card .metric { font-size: 0.8rem; color: var(--muted); }
+  .trend-up { color: var(--bad); } .trend-down { color: var(--good); }
+  .insight-list { max-height: 640px; overflow-y: auto; }
+  .insight-card { border-left: 3px solid var(--accent); padding: 12px 16px; margin-bottom: 14px; border-radius: 0 8px 8px 0; background: #171a28; }
+  .insight-card .meta-row { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .insight-card .what { font-weight: 600; margin-bottom: 6px; }
+  .insight-card .why { font-size: 0.85rem; color: #c7c9dd; margin-bottom: 6px; }
+  .insight-card .next-step { font-size: 0.85rem; background: #22263a; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; }
+  .insight-card .source { font-size: 0.7rem; color: var(--muted); font-style: italic; }
+  .actions-list { list-style: none; }
+  .actions-list li { font-size: 0.82rem; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .actions-list li:last-child { border-bottom: none; }
+  .actions-list .tag { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; margin-right: 6px; }
+  .chart { width: 100%; height: 300px; }
+</style>
+</head>
+<body>
+  <h1>Cross-Channel Marketing Performance Dashboard</h1>
+  <div class="subtitle">Meta &middot; Google Search &middot; TikTok &middot; Pinterest &middot; Snapchat &middot; Programmatic &middot; Mailchimp</div>
+  
+  <div class="note">Static snapshot &mdash; generated 2026-07-03 from synthetic demo data by <code>generate_static_site.py</code>. See the <a href="https://github.com/deepakart108/cross-channel-marketing-dashboard" style="color:inherit;">GitHub repo</a> for the full pipeline (ingest &rarr; rules engine &rarr; RAG-grounded Claude insights).</div>
+  
+
+  <div class="grid-4">
+    <div class="card"><h2>Total Spend</h2><div class="stat">$259935</div></div>
+    <div class="card"><h2>Blended CPA</h2><div class="stat">$19.30</div></div>
+    <div class="card"><h2>Blended ROAS</h2><div class="stat">2.78x</div></div>
+    <div class="card"><h2>Conversions</h2><div class="stat">13467</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <h2>Channel Breakdown</h2>
+    <div class="channel-cards">
+      
+      <div class="channel-card" style="border-top-color: #6c63ff;">
+        <div class="name">meta</div>
+        <div class="spend">$62083</div>
+        <div class="metric">
+          CTR 1.31% &middot; 
+          CPA $14.12
+          <span class="trend-up">
+            &#9650;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #4285F4;">
+        <div class="name">google_search</div>
+        <div class="spend">$51774</div>
+        <div class="metric">
+          CTR 5.18% &middot; 
+          CPA $39.22
+          <span class="trend-up">
+            &#9650;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #8b8fa8;">
+        <div class="name">Generic DSP</div>
+        <div class="spend">$50985</div>
+        <div class="metric">
+          CTR 0.36% &middot; 
+          CPA $50.83
+          <span class="trend-down">
+            &#9660;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #25F4EE;">
+        <div class="name">tiktok</div>
+        <div class="spend">$49860</div>
+        <div class="metric">
+          CTR 1.10% &middot; 
+          CPA $15.32
+          <span class="trend-down">
+            &#9660;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #E60023;">
+        <div class="name">pinterest</div>
+        <div class="spend">$29594</div>
+        <div class="metric">
+          CTR 1.01% &middot; 
+          CPA $14.83
+          <span class="trend-down">
+            &#9660;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #FFFC00;">
+        <div class="name">snapchat</div>
+        <div class="spend">$15640</div>
+        <div class="metric">
+          CTR 1.01% &middot; 
+          CPA $26.43
+          <span class="trend-up">
+            &#9650;
+          </span>
+        </div>
+      </div>
+      
+      <div class="channel-card" style="border-top-color: #FFE01B;">
+        <div class="name">mailchimp</div>
+        <div class="spend">$—</div>
+        <div class="metric">
+          
+          Open Rate 14.9%
+          <span class="">
+            &#9660;
+          </span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Insight Feed</h2>
+      <div class="insight-list">
+        
+        <div class="insight-card">
+          <div class="meta-row">email list dilution &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
+          <div class="what">Send volume rose from 71400 to 86099 while open rate fell from 18.1% to 14.9% — possible list dilution.</div>
+          <div class="why">This is the exact warning pattern Mailchimp&#39;s List health guidance describes: a send-volume increase coinciding with a falling open rate signals list dilution or a relevance/cadence mismatch, and if unaddressed the guidance notes it tends to progress into a rising unsubscribe rate as the downstream confirmation. At 14.9%, open rate is also now well below the all-industry blended average of 35.63%, though the guidance cautions to weigh this against the list&#39;s own trailing baseline rather than the industry figure alone.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull click rate for the same period alongside unsubscribe rate trailing average — since click rate is less distorted by Apple MPP inflation/suppression, use it to confirm whether the open-rate drop reflects real engagement decline versus tracking noise, and check whether the newly added subscribers (the volume increase from 71,400 to 86,099) are a distinct cohort with lower open rates than the existing base.</div>
+          <div class="source">mailchimp_email.md › List health; mailchimp_email.md › Metric definitions; mailchimp_email.md › Benchmark averages (all-industry, Mailchimp data)</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cross channel acquisition gap &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
+          <div class="what">Paid social spend spiked 1-2 weeks prior and email open rate is now declining (21.3% -&gt; 18.1%) — possible acquisition-to-activation gap.</div>
+          <div class="why">The timing lines up with Mailchimp&#39;s list-quality warning pattern: an influx of new signups from paid social (effectively a send-volume/list-growth increase) coinciding with a falling open rate (21.3% → 18.1%) suggests these newly acquired contacts may be lower-intent than the organic list, diluting overall engagement — and per the List health guidance, a rising unsubscribe rate is often the downstream confirmation if this isn&#39;t addressed.</div>
+          <div class="next-step"><strong>Next step:</strong> Segment the list by acquisition source and compare open/click rates for the paid-social-acquired cohort against the trailing baseline for pre-existing subscribers; since open rate can be inflated or suppressed by Apple MPP, use click rate as the more trustworthy signal to confirm whether the new cohort is genuinely less engaged before adjusting onboarding emails or suppressing/re-permissioning that segment.</div>
+          <div class="source">mailchimp_email.md › List health (send-volume increase coinciding with falling open rate as a list-quality warning, unsubscribe spike as downstream confirmation); mailchimp_email.md › Metric definitions (Apple MPP inflating opens, click rate as more trustworthy signal, and comparing against a list&#39;s own trailing baseline rather than industry averages).</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">unsubscribe spike &middot; mailchimp / Weekly Newsletter &middot; materiality 1.00</div>
+          <div class="what">Unsubscribes hit 299, over 2x the trailing average of 60 — likely a content or send-cadence mismatch.</div>
+          <div class="why">Per the List health guidance, an unsubscribe spike well above trailing average is the &#39;downstream confirmation that content or cadence stopped matching what the list signed up for&#39; — at 299 unsubscribes (2x the trailing average of 60), this signals a relevance/cadence mismatch that will erode list quality and future deliverability if unaddressed.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the open rate trend for this list over the sends leading up to 2026-06-15 — per the List health guidance, a falling open rate paired with a send-volume increase is the platform&#39;s own early warning pattern preceding an unsubscribe spike; if open rate was declining beforehand, revert this campaign&#39;s send frequency and content style back to the last baseline period where opens/unsubscribes were normal before sending the next Weekly Newsletter.</div>
+          <div class="source">mailchimp_email.md › List health</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; google_search / Non-Brand - Category Terms &middot; materiality 0.63</div>
+          <div class="what">CPA rose 72% week-over-week, from $20.97 to $36.08.</div>
+          <div class="why">A 72% week-over-week CPA jump on Non-Brand - Category Terms means each conversion is now costing substantially more, which will erode ROI on this campaign if left unaddressed. Per the guidance, sudden shifts like this typically trace back to either impression share erosion (budget constraints, competitiveness, or Quality Score regression) or a Quality Score decline driven by below-average Expected CTR, ad relevance, or landing page experience.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for the top-spending keywords in this campaign for the 2026-06-22 to 2026-06-28 window and compare against the prior week to identify which component regressed and whether it coincides with an impression share drop, rather than treating Quality Score itself as a KPI to optimize directly.</div>
+          <div class="source">google_ads_search.md › Quality Score; google_ads_search.md › Impression share</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">search impression share drop &middot; google_search / Non-Brand - Category Terms &middot; materiality 0.63</div>
+          <div class="what">Search impression share dropped from 67.8% to 53.3% on flat spend — likely rising competition or a Quality Score drop.</div>
+          <div class="why">A 14.5-point impression share drop on flat spend means the campaign is now losing a substantially larger share of eligible auctions, which directly caps reach and volume for Non-Brand - Category Terms. Per the guidance, since there&#39;s no corresponding budget or bid change, this pattern &#39;points toward rising competition or a Quality Score regression rather than a self-inflicted cause,&#39; meaning the loss is likely coming from competitors or an ad quality decline rather than a controllable spend decision.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the keyword-level Quality Score breakdown for this campaign and check whether Expected CTR has shifted to &#39;Below average&#39; — since the guidance notes a low CTR is &#39;one of the clearest below-average signals&#39; for that component, often caused by ad copy misaligned with query intent or overly broad targeting; if CTR is down, rewrite ad copy to more tightly match the top query themes in these category terms.</div>
+          <div class="source">google_ads_search.md › Impression share (for the competitive/no-bid-change reasoning); google_ads_search.md › Quality Score (for the Expected CTR / low-CTR diagnostic).</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; pinterest / Shopping Ads - Catalog Sales &middot; materiality 0.60</div>
+          <div class="what">CPA rose 25% week-over-week, from $11.88 to $14.82.</div>
+          <div class="why">A 25% week-over-week jump in CPA on a Shopping Ads catalog campaign means you&#39;re paying substantially more per acquisition, and Pinterest&#39;s Path to Performance framework indicates that for catalog/shopping campaigns specifically, performance problems like this often trace back to feed and signal quality issues rather than creative degradation.</div>
+          <div class="next-step"><strong>Next step:</strong> Audit the catalog feed ingestion status and event signal quality (e.g., purchase/conversion event matching) in the Path to Performance scorecard for this campaign to identify feed or signal health issues before adjusting bids or creative.</div>
+          <div class="source">pinterest_ads.md › Path to Performance</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; snapchat / Snap Ads - Prospecting &middot; materiality 0.58</div>
+          <div class="what">CPA rose 20% week-over-week, from $24.68 to $29.66.</div>
+          <div class="why">A 20% week-over-week CPA jump on Snap Ads - Prospecting is consistent with the platform-native fatigue pattern Snap describes: rising frequency against flat reach means the same audience is absorbing delivery instead of the campaign finding fresh users, and this typically shows up first as declining swipe rate before compounding into higher CPA.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for the Snap Ads - Prospecting campaign over the past two weeks; if frequency is climbing while reach is flat and swipe rate is declining, refresh creative and expand or rotate the audience to restore fresh reach.</div>
+          <div class="source">snapchat_ads.md › Paid frequency; snapchat_ads.md › Swipe rate (CTR); snapchat_ads.md › Cost and frequency together</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; tiktok / In-Feed - Core Prospecting &middot; materiality 0.56</div>
+          <div class="what">CPA rose 50% week-over-week, from $13.44 to $20.21 (alongside declining CTR).</div>
+          <div class="why">A 50% CPA jump alongside declining CTR matches TikTok&#39;s own definition of creative fatigue setting in — &#34;a consistently declining trend&#34; in delivery results (When to refresh creative) — meaning the In-Feed - Core Prospecting campaign is likely burning budget on an audience that has stopped responding to current creative, driving costs up as efficiency erodes.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull up Video Insights for the In-Feed - Core Prospecting ad group to identify which specific creative(s) are degrading, then add 3-5 new diversified creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery without resetting the learning phase.</div>
+          <div class="source">tiktok_ads.md › When to refresh creative; tiktok_ads.md › Tooling; tiktok_ads.md › Structure</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; Generic DSP / CTV - Streaming Inventory &middot; materiality 0.56</div>
+          <div class="what">CPA rose 31% week-over-week, from $43.48 to $57.04 (alongside declining CTR).</div>
+          <div class="why">A 31% week-over-week CPA increase alongside declining CTR on CTV inventory raises efficiency concerns, but the provided guidance only addresses viewability as a placement/inventory quality signal — it does not directly cover CPA or CTR mechanics, so the cost impact here cannot be tied to a specific documented cause.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull the viewability report for this CTV placement and check whether it sits well under the ~50% MRC pass threshold (not just below the ~96% CTV/display network average); if so, treat it as an inventory/placement quality issue and audit the supply-side partners and specific placements feeding this campaign rather than adjusting creative or targeting.</div>
+          <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; Generic DSP / Display - Contextual Network &middot; materiality 0.44</div>
+          <div class="what">CPA rose 116% week-over-week, from $38.79 to $83.61 (alongside declining CTR).</div>
+          <div class="why">A 116% week-over-week CPA increase alongside declining CTR means the campaign is spending significantly more to acquire the same conversions, eroding efficiency and budget performance on the Display - Contextual Network campaign.</div>
+          <div class="next-step"><strong>Next step:</strong> Pull an MRC-accredited viewability report broken out by placement for this campaign and identify any desktop banner or below-the-fold slots sitting well under the ~50% MRC pass threshold, then pause or exclude those low-viewability placements, since the guidance indicates sub-threshold viewability reflects an inventory/placement quality problem rather than creative or targeting issues.</div>
+          <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">programmatic viewability &middot; Generic DSP / Display - Contextual Network &middot; materiality 0.44</div>
+          <div class="what">Viewability is 39%, below the 50% floor.</div>
+          <div class="why">At 39% viewability, this placement falls well below the 50% MRC pass threshold and far under the 72% cross-network average, meaning a majority of served impressions never had a real chance to be seen — advertisers are effectively paying for impressions that don&#39;t meet the industry&#39;s baseline definition of a viewable ad. Per the guidance, this pattern points to an inventory/placement quality problem (e.g., below-the-fold slots or low-quality supply-side partners) rather than a creative or targeting issue.</div>
+          <div class="next-step"><strong>Next step:</strong> Audit the Display - Contextual Network placement list to identify and exclude specific below-the-fold or low-quality supply-side partner placements driving the 39% rate, then reallocate that budget to inventory sources performing closer to the ~64% desktop banner or ~81% native benchmarks.</div>
+          <div class="source">programmatic_viewability.md › Benchmark context; programmatic_viewability.md › The standard</div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="meta-row">cpa spike &middot; meta / Prospecting - Broad &middot; materiality 0.44</div>
+          <div class="what">CPA rose 53% week-over-week, from $10.26 to $15.73 (alongside declining CTR).</div>
+          <div class="why">A 53% week-over-week CPA increase paired with declining CTR on this cold prospecting campaign is the pattern the guidance associates with creative fatigue — as an audience sees the same creative too often, performance declines, driving up acquisition costs. If this pattern continues unaddressed, Prospecting - Broad will keep becoming less efficient at the same or higher spend.</div>
+          <div class="next-step"><strong>Next step:</strong> Check the frequency metric for Prospecting - Broad against the cold prospecting benchmark (healthy: 1.5–2.5, warning: 3.0–4.0); if it&#39;s in or above the warning zone, add 3–5 new creative variations to this campaign before considering any audience expansion.</div>
+          <div class="source">meta_ads.md › Creative fatigue</div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="card">
+      <h2>Recommended Actions</h2>
+      <ul class="actions-list">
+        
+        
+        <li><span class="tag">mailchimp</span>Pull click rate for the same period alongside unsubscribe rate trailing average — since click rate is less distorted by Apple MPP inflation/suppression, use it to confirm whether the open-rate drop reflects real engagement decline versus tracking noise, and check whether the newly added subscribers (the volume increase from 71,400 to 86,099) are a distinct cohort with lower open rates than the existing base.</li>
+        
+        
+        
+        <li><span class="tag">mailchimp</span>Segment the list by acquisition source and compare open/click rates for the paid-social-acquired cohort against the trailing baseline for pre-existing subscribers; since open rate can be inflated or suppressed by Apple MPP, use click rate as the more trustworthy signal to confirm whether the new cohort is genuinely less engaged before adjusting onboarding emails or suppressing/re-permissioning that segment.</li>
+        
+        
+        
+        <li><span class="tag">mailchimp</span>Pull the open rate trend for this list over the sends leading up to 2026-06-15 — per the List health guidance, a falling open rate paired with a send-volume increase is the platform&#39;s own early warning pattern preceding an unsubscribe spike; if open rate was declining beforehand, revert this campaign&#39;s send frequency and content style back to the last baseline period where opens/unsubscribes were normal before sending the next Weekly Newsletter.</li>
+        
+        
+        
+        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score breakdown (Expected CTR, Ad relevance, Landing page experience) for the top-spending keywords in this campaign for the 2026-06-22 to 2026-06-28 window and compare against the prior week to identify which component regressed and whether it coincides with an impression share drop, rather than treating Quality Score itself as a KPI to optimize directly.</li>
+        
+        
+        
+        <li><span class="tag">google_search</span>Pull the keyword-level Quality Score breakdown for this campaign and check whether Expected CTR has shifted to &#39;Below average&#39; — since the guidance notes a low CTR is &#39;one of the clearest below-average signals&#39; for that component, often caused by ad copy misaligned with query intent or overly broad targeting; if CTR is down, rewrite ad copy to more tightly match the top query themes in these category terms.</li>
+        
+        
+        
+        <li><span class="tag">pinterest</span>Audit the catalog feed ingestion status and event signal quality (e.g., purchase/conversion event matching) in the Path to Performance scorecard for this campaign to identify feed or signal health issues before adjusting bids or creative.</li>
+        
+        
+        
+        <li><span class="tag">snapchat</span>Pull paid frequency (paid impressions ÷ paid reach) and swipe rate for the Snap Ads - Prospecting campaign over the past two weeks; if frequency is climbing while reach is flat and swipe rate is declining, refresh creative and expand or rotate the audience to restore fresh reach.</li>
+        
+        
+        
+        <li><span class="tag">tiktok</span>Pull up Video Insights for the In-Feed - Core Prospecting ad group to identify which specific creative(s) are degrading, then add 3-5 new diversified creatives directly into the existing ad group (rather than creating a new ad group) to refresh delivery without resetting the learning phase.</li>
+        
+        
+        
+        <li><span class="tag">Generic DSP</span>Pull the viewability report for this CTV placement and check whether it sits well under the ~50% MRC pass threshold (not just below the ~96% CTV/display network average); if so, treat it as an inventory/placement quality issue and audit the supply-side partners and specific placements feeding this campaign rather than adjusting creative or targeting.</li>
+        
+        
+        
+        <li><span class="tag">Generic DSP</span>Pull an MRC-accredited viewability report broken out by placement for this campaign and identify any desktop banner or below-the-fold slots sitting well under the ~50% MRC pass threshold, then pause or exclude those low-viewability placements, since the guidance indicates sub-threshold viewability reflects an inventory/placement quality problem rather than creative or targeting issues.</li>
+        
+        
+        
+        <li><span class="tag">Generic DSP</span>Audit the Display - Contextual Network placement list to identify and exclude specific below-the-fold or low-quality supply-side partner placements driving the 39% rate, then reallocate that budget to inventory sources performing closer to the ~64% desktop banner or ~81% native benchmarks.</li>
+        
+        
+        
+        <li><span class="tag">meta</span>Check the frequency metric for Prospecting - Broad against the cold prospecting benchmark (healthy: 1.5–2.5, warning: 3.0–4.0); if it&#39;s in or above the warning zone, add 3–5 new creative variations to this campaign before considering any audience expansion.</li>
+        
+        
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card"><h2>Spend Over Time</h2><div id="chart-spend" class="chart"></div></div>
+    <div class="card"><h2>CPA Over Time</h2><div id="chart-cpa" class="chart"></div></div>
+    <div class="card"><h2>Channel Mix (Total Spend)</h2><div id="chart-mix" class="chart"></div></div>
+  </div>
+
+<script>
+const charts = {"spend_trend": {"data": [{"line": {"color": "#8b8fa8"}, "mode": "lines+markers", "name": "Generic DSP", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "SOF6FO6RuEAzMzMzc8m4QLgeheuR/bhA16NwPcrjuUBSuB6Fa0W5QKRwPQoXiLhAkML1KNyxuED2KFyPgmy4QA=="}, "type": "scatter"}, {"line": {"color": "#4285F4"}, "mode": "lines+markers", "name": "google_search", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "cT0K1yP+uEC4HoXrEaK4QNijcD0KTrpAXI/C9WgouUApXI/CNaG5QArXo3C9xbhArkfhepRRuUA+CtejcG65QA=="}, "type": "scatter"}, {"line": {"color": "#6c63ff"}, "mode": "lines+markers", "name": "meta", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "exSuR+GBvUAUrkfhuom8QFyPwvWonLtAFa5H4frwvEAUrkfhOs3DQClcj8L1Gb1ApHA9ClfCvUCQwvUo3HK9QA=="}, "type": "scatter"}, {"line": {"color": "#E60023"}, "mode": "lines+markers", "name": "pinterest", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "AAAAAID1qkDNzMzMTNyqQKRwPQpX2KxAAAAAAIDrq0BI4XoU7oGzQChcj8L1L6pA4noUrkcQrEBcj8L1qFmrQA=="}, "type": "scatter"}, {"line": {"color": "#FFFC00"}, "mode": "lines+markers", "name": "snapchat", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "kML1KFy9nUDMzMzMzHucQNejcD0K0J1ASOF6FK6PnEAK16NwvdGjQIbrUbgeL55ANDMzMzOgnEAUrkfhelOdQA=="}, "type": "scatter"}, {"line": {"color": "#25F4EE"}, "mode": "lines+markers", "name": "tiktok", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "ZmZmZubhtkCkcD0Kl8G2QFK4HoVrbbdAFK5H4bqYuEBmZmZmpi++QClcj8K1qbdA16NwPYrltkA0MzMzc1u4QA=="}, "type": "scatter"}], "layout": {"template": {"data": {"histogram2dcontour": [{"type": "histogram2dcontour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "choropleth": [{"type": "choropleth", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "histogram2d": [{"type": "histogram2d", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "heatmap": [{"type": "heatmap", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "contourcarpet": [{"type": "contourcarpet", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "contour": [{"type": "contour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "surface": [{"type": "surface", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "mesh3d": [{"type": "mesh3d", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "parcoords": [{"type": "parcoords", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolargl": [{"type": "scatterpolargl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "scattergeo": [{"type": "scattergeo", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolar": [{"type": "scatterpolar", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "scattergl": [{"type": "scattergl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatter3d": [{"type": "scatter3d", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermap": [{"type": "scattermap", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermapbox": [{"type": "scattermapbox", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterternary": [{"type": "scatterternary", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattercarpet": [{"type": "scattercarpet", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "pie": [{"automargin": true, "type": "pie"}]}, "layout": {"autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "hovermode": "closest", "hoverlabel": {"align": "left"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"bgcolor": "#E5ECF6", "angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "ternary": {"bgcolor": "#E5ECF6", "aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]]}, "xaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "yaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "geo": {"bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white"}, "title": {"x": 0.05}, "mapbox": {"style": "light"}}}, "font": {"color": "#e4e6f1", "family": "-apple-system, sans-serif"}, "margin": {"l": 40, "r": 20, "t": 20, "b": 40}, "legend": {"orientation": "h", "y": -0.2}, "xaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e", "tickformat": "%b %d", "dtick": 604800000}, "yaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e", "title": {"text": "Spend ($)"}}, "paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)"}}, "cpa_trend": {"data": [{"line": {"color": "#8b8fa8"}, "mode": "lines+markers", "name": "Generic DSP", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "w14fKcX1SEDavZR6mChHQFVX5iVCYkJApFysBKw9RkB0Bnias5pDQGJRCzF/qERA6HJ68O+iUEBL1apUrWpJQA=="}, "type": "scatter"}, {"line": {"color": "#4285F4"}, "mode": "lines+markers", "name": "google_search", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "aBtgMRZEN0AXzipQ3Wc8QGsDnTbQYTdA82gmnFkPOUBq51jkaTw+QK1lhAn1pkJAnf0ZCMsHOkB0rg4rGZxDQA=="}, "type": "scatter"}, {"line": {"color": "#6c63ff"}, "mode": "lines+markers", "name": "meta", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "bvnrIPrHKUAbmDcDxv0rQGG7p99nFSpABRVbNeepJUBUhXL8CN0pQD+9dxumCitAvewohpQ5KkBQ1+YvRTwsQA=="}, "type": "scatter"}, {"line": {"color": "#E60023"}, "mode": "lines+markers", "name": "pinterest", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "e71er9crK0ChGM6GkAMtQEMY1hm8ZixAMileIJNiK0Cb8IoWuvYxQE3cdsKwUy9An0sgaxhFMUBF5V1hBastQA=="}, "type": "scatter"}, {"line": {"color": "#FFFC00"}, "mode": "lines+markers", "name": "snapchat", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "Ow9aB9xmOEDe3t7e3s46QMyVAHrdQTtAoek9TzEfPEDaIl601EA2QJaIg5BKNTtAw/UoXI/mNkCXTXpQTm86QA=="}, "type": "scatter"}, {"line": {"color": "#25F4EE"}, "mode": "lines+markers", "name": "tiktok", "x": ["2026-05-04T00:00:00", "2026-05-11T00:00:00", "2026-05-18T00:00:00", "2026-05-25T00:00:00", "2026-06-01T00:00:00", "2026-06-08T00:00:00", "2026-06-15T00:00:00", "2026-06-22T00:00:00"], "y": {"dtype": "f8", "bdata": "biFSECQeLkCKTLzCAKUwQJRSfYLXgitACU4XxhMYMkAo3zth7tgrQDsTSjbciDRAKWpZA95tL0BxbFarGqQuQA=="}, "type": "scatter"}], "layout": {"template": {"data": {"histogram2dcontour": [{"type": "histogram2dcontour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "choropleth": [{"type": "choropleth", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "histogram2d": [{"type": "histogram2d", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "heatmap": [{"type": "heatmap", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "contourcarpet": [{"type": "contourcarpet", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "contour": [{"type": "contour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "surface": [{"type": "surface", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "mesh3d": [{"type": "mesh3d", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "parcoords": [{"type": "parcoords", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolargl": [{"type": "scatterpolargl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "scattergeo": [{"type": "scattergeo", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolar": [{"type": "scatterpolar", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "scattergl": [{"type": "scattergl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatter3d": [{"type": "scatter3d", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermap": [{"type": "scattermap", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermapbox": [{"type": "scattermapbox", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterternary": [{"type": "scatterternary", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattercarpet": [{"type": "scattercarpet", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "pie": [{"automargin": true, "type": "pie"}]}, "layout": {"autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "hovermode": "closest", "hoverlabel": {"align": "left"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"bgcolor": "#E5ECF6", "angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "ternary": {"bgcolor": "#E5ECF6", "aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]]}, "xaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "yaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "geo": {"bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white"}, "title": {"x": 0.05}, "mapbox": {"style": "light"}}}, "font": {"color": "#e4e6f1", "family": "-apple-system, sans-serif"}, "margin": {"l": 40, "r": 20, "t": 20, "b": 40}, "legend": {"orientation": "h", "y": -0.2}, "xaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e", "tickformat": "%b %d", "dtick": 604800000}, "yaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e", "title": {"text": "CPA ($)"}}, "paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)"}}, "channel_mix": {"data": [{"marker": {"color": ["#6c63ff", "#4285F4", "#8b8fa8", "#25F4EE", "#E60023", "#FFFC00", "#FFE01B"]}, "x": ["meta", "google_search", "Generic DSP", "tiktok", "pinterest", "snapchat", "mailchimp"], "y": {"dtype": "f8", "bdata": "cT0K11tQ7kCQwvUotEfpQHE9CtcT5ehA4XoUrn9Y6EDNzMzMbObcQOxRuB7li85AAAAAAAAAAAA="}, "type": "bar"}], "layout": {"template": {"data": {"histogram2dcontour": [{"type": "histogram2dcontour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "choropleth": [{"type": "choropleth", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "histogram2d": [{"type": "histogram2d", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "heatmap": [{"type": "heatmap", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "contourcarpet": [{"type": "contourcarpet", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "contour": [{"type": "contour", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "surface": [{"type": "surface", "colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}], "mesh3d": [{"type": "mesh3d", "colorbar": {"outlinewidth": 0, "ticks": ""}}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "parcoords": [{"type": "parcoords", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolargl": [{"type": "scatterpolargl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "scattergeo": [{"type": "scattergeo", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterpolar": [{"type": "scatterpolar", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "scattergl": [{"type": "scattergl", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatter3d": [{"type": "scatter3d", "line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermap": [{"type": "scattermap", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattermapbox": [{"type": "scattermapbox", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scatterternary": [{"type": "scatterternary", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "scattercarpet": [{"type": "scattercarpet", "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "pie": [{"automargin": true, "type": "pie"}]}, "layout": {"autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "hovermode": "closest", "hoverlabel": {"align": "left"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"bgcolor": "#E5ECF6", "angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "ternary": {"bgcolor": "#E5ECF6", "aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]]}, "xaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "yaxis": {"gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "geo": {"bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white"}, "title": {"x": 0.05}, "mapbox": {"style": "light"}}}, "font": {"color": "#e4e6f1", "family": "-apple-system, sans-serif"}, "margin": {"l": 40, "r": 20, "t": 20, "b": 40}, "legend": {"orientation": "h", "y": -0.2}, "xaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e"}, "yaxis": {"gridcolor": "#2a2d3e", "zerolinecolor": "#2a2d3e", "title": {"text": "Total Spend ($)"}}, "paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)"}}};
+const opts = {responsive: true, displayModeBar: false};
+Plotly.newPlot('chart-spend', charts.spend_trend.data, charts.spend_trend.layout, opts);
+Plotly.newPlot('chart-cpa', charts.cpa_trend.data, charts.cpa_trend.layout, opts);
+Plotly.newPlot('chart-mix', charts.channel_mix.data, charts.channel_mix.layout, opts);
+
+
+</script>
+</body>
+</html>
